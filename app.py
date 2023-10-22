@@ -15,7 +15,7 @@ def index():
 
     return render_template('index.html')
 
-@app.route("/https://youtu.be/", methods=["GET"])
+@app.route("/audio?url=https://youtu.be/<video_id>", methods=["GET"])
 def audio(video_id):
     youtube_link = f"https://www.youtube.com/watch?v={video_id}"
     buffer = BytesIO()
@@ -30,7 +30,7 @@ def audio(video_id):
 
     return "Invalid or missing YouTube link parameter."
 
-@app.route("/download", methods=["GET"])
+@app.route("/video", methods=["GET"])
 def download():
     youtube_link = request.args.get("url")
     if youtube_link:
