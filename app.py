@@ -15,7 +15,7 @@ def index():
 
     return render_template('index.html')
 
-@app.route("/audio/<video_id>", methods=["GET"])
+@app.route("/", methods=["GET"])
 def audio(video_id):
     youtube_link = f"https://www.youtube.com/watch?v={video_id}"
     buffer = BytesIO()
