@@ -15,39 +15,6 @@ def index():
 
     return render_template('index.html')
 
-@app.route("/audio/<video_id>", methods=["GET"])
-def audio(video_id):
-    youtube_link = f"https://www.youtube.com/watch?v={video_id}"
-    buffer = BytesIO()
-    url = YouTube(youtube_link)
-    audio_stream = url.streams.filter(only_audio=True).first()
-
-    if audio_stream:
-        audio_stream.stream_to_buffer(buffer)
-        buffer.seek(0)
-
-        return send_file(buffer, as_attachment=True, download_name=f"{url.title}.mp3", mimetype="audio/mpeg")
-
-    return "Invalid or missing YouTube link parameter."
-
-@app.route("/video", methods=["GET"])
-def download():
-    youtube_link = request.args.get("url")
-    if youtube_link:
-        buffer = BytesIO()
-        url = YouTube(youtube_link)
-        video = url.streams.get_highest_resolution()
-
-        # Stream the video to the buffer
-        video.stream_to_buffer(buffer)
-        buffer.seek(0)
-
-        return send_file(buffer, as_attachment=True, download_name=video.title, mimetype=video.mime_type)
-
-    return "Invalid or missing YouTube link parameter."
-
-app = Flask(__name)
-
 @app.route('/download', methods=['GET'])
 def download_4k_video():
     yt_url = request.args.get('url')
@@ -67,10 +34,5 @@ def download_4k_video():
     except Exception as e:
         return f"An error occurred: {str(e)}"
 
-
-
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-
