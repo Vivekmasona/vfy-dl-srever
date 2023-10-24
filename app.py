@@ -46,6 +46,29 @@ def download():
 
     return "Invalid or missing YouTube link parameter."
 
+app = Flask(__name)
+
+@app.route('/download', methods=['GET'])
+def download_4k_video():
+    yt_url = request.args.get('url')
+
+    try:
+        yt = YouTube(yt_url)
+        stream = yt.streams.filter(res="2160p").first()
+
+        if stream:
+            video_data = stream.stream_to_buffer()
+            response = Response(video_data, content_type='video/mp4')
+            response.headers['Content-Disposition'] = f'attachment; filename={yt.title}.mp4'
+            return response
+        else:
+            return "No 4K video available for this URL."
+
+    except Exception as e:
+        return f"An error occurred: {str(e)}"
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
 
