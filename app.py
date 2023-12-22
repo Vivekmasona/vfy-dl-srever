@@ -1,8 +1,20 @@
-from flask import Flask, request
+from pytube import YouTube
+from flask import Flask, session, url_for, send_file, render_template, redirect, request
+from io import BytesIO
 
 app = Flask(__name__)
+app.config["SECRET_KEY"] = "my_secret_key"
 
-import yt_dlp as youtube_dl
+@app.route("/", methods=["POST", "GET"])
+def index():
+    if request.method == "POST":
+        session["link"] = request.form.get("url")
+        url = YouTube(session["link"])
+        url.check_availability()
+        return render_template("download.html", url=url)
+
+    return render_template('index.html')
+
 
 def get_mp3(video_url, destination_path="~/Music"):
     video_info = youtube_dl.YoutubeDL().extract_info(
