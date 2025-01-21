@@ -1,8 +1,8 @@
-# Flask Application
-from flask import Flask, session, send_file, render_template, request, jsonify
+from flask import Flask, session, url_for, send_file, render_template, redirect, request, jsonify
 from io import BytesIO
 from pytube import YouTube
 from yt_dlp import YoutubeDL
+import json
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "my_secret_key"
@@ -54,12 +54,27 @@ def directurl():
                 playback_url = info_dict.get('url', None)
                 title = info_dict.get('title', 'Unknown Title')
             if playback_url:
-                return jsonify({"status": "success", "title": title, "playback_url": playback_url})
+                response = {
+                    "status": "success",
+                    "title": title,
+                    "playback_url": playback_url
+                }
             else:
-                return jsonify({"status": "error", "message": "Could not retrieve playback URL"})
+                response = {
+                    "status": "error",
+                    "message": "Could not retrieve playback URL"
+                }
         except Exception as e:
-            return jsonify({"status": "error", "message": str(e)})
-    return jsonify({"status": "error", "message": "No URL provided. Use '?url=YOUTUBE_URL' in the query."})
+            response = {
+                "status": "error",
+                "message": str(e)
+            }
+    else:
+        response = {
+            "status": "error",
+            "message": "No URL provided. Use '?url=YOUTUBE_URL' in the query."
+        }
+    return jsonify(response)
 
 if __name__ == '__main__':
     app.run(debug=True)
